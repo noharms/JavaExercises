@@ -18,11 +18,11 @@ class ExerciseMergesortTest {
     RandomIntegerArray randarr = new RandomIntegerArray(n, max_val);
 
     // actual output
-    List<Integer> actual = new ArrayList<>(randarr.arr);
+    List<Integer> actual = new ArrayList<>(randarr.arrList);
     ExerciseMergesort.mergesort(actual, 0, n - 1);
 
     // expected output
-    List<Integer> expected = new ArrayList<>(randarr.arr);
+    List<Integer> expected = new ArrayList<>(randarr.arrList);
     Collections.sort(expected);
 
     // compare actual and expected
