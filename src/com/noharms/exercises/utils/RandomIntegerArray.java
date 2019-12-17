@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class RandomIntegerArray {
 
-  public ArrayList<Integer> arr = new ArrayList<>();
+  public final ArrayList<Integer> arr = new ArrayList<>();
 
   public RandomIntegerArray(int n, int max) {
     Random randgenerator = new Random();

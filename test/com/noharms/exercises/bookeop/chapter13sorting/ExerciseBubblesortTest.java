@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-class ExerciseQuicksortTest {
+class ExerciseBubblesortTest {
 
   @Test
-  void quicksortTest() {
+  void bubblesortTest() {
     // input
     final int n = 10;
     final int max_val = 20;
@@ -19,7 +19,7 @@ class ExerciseQuicksortTest {
 
     // actual output
     List<Integer> actual = new ArrayList<>(randarr.arr);
-    ExerciseQuicksort.quicksort(actual, 0, n - 1);
+    ExerciseBubblesort.bubblesort(actual, 0, n - 1);
 
     // expected output
     List<Integer> expected = new ArrayList<>(randarr.arr);
@@ -28,8 +28,5 @@ class ExerciseQuicksortTest {
     // compare actual and expected
     Assertions.assertEquals(expected, actual);
 
-    return;
   }
-
-
 }
