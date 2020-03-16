@@ -1,6 +1,9 @@
 package com.noharms.exercises.codewars.ExerciseChess;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Convention:
  *
@@ -96,4 +99,17 @@ public class ChessBoard {
     return;
   }
 
+  public PieceConfig[] buildPiecesArray() {
+    List<PieceConfig> pieces = new ArrayList<>();
+    for (int row = 0; row < K_DIM; ++row) {
+      for (int col = 0; col < K_DIM; ++col) {
+        if (board[row][col] == null) {
+          continue;
+        } else {
+          pieces.add(new PieceConfig(board[row][col]));
+        }
+      }
+    }
+    return pieces.toArray(PieceConfig[]::new);
+  }
 }

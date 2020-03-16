@@ -17,6 +17,7 @@ public class ChessMove {
   }
 
 
+  public boolean isAttack() { return isAttack; }
   public Coordinates getNewPos() {
     return newPos;
   }

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExerciseIsCheckIsMateTest {
 
   @Test
-  void isCheckTest() {
+  void isCheckTest1() {
     // input
     PieceConfig[] pieces = new PieceConfig[] {
             new PieceConfig("KING", K_BLACK, 0, 4),
@@ -26,8 +26,138 @@ class ExerciseIsCheckIsMateTest {
     Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[2]));
 
     // actual
-    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces, K_WHITE);
-    Set<PieceConfig> piecesThreateningKing = ex.isCheck();
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
+
+    // compare
+    assertEquals(expected, piecesThreateningKing);
+  }
+
+  @Test
+  void isCheckTest2() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 0, 4),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("ROOK", K_BLACK, 1, 4)
+    };
+    //OutputPiecesAsBoard.print(pieces);
+
+    // expected
+    Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[2]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
+
+    // compare
+    assertEquals(expected, piecesThreateningKing);
+  }
+
+  @Test
+  void isCheckTest3() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 0, 4),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("KNIGHT", K_BLACK, 6, 2)
+    };
+    //OutputPiecesAsBoard.print(pieces);
+
+    // expected
+    Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[2]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
+
+    // compare
+    assertEquals(expected, piecesThreateningKing);
+  }
+
+  @Test
+  void isCheckTest4() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 0, 4),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("BISHOP", K_BLACK, 3, 0)
+    };
+    //OutputPiecesAsBoard.print(pieces);
+
+    // expected
+    Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[2]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
+
+    // compare
+    assertEquals(expected, piecesThreateningKing);
+  }
+
+  @Test
+  void isCheckTest5() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 0, 4),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("QUEEN", K_BLACK, 1, 4)
+    };
+    //OutputPiecesAsBoard.print(pieces);
+
+    // expected
+    Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[2]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
+
+    // compare
+    assertEquals(expected, piecesThreateningKing);
+  }
+
+  @Test
+  void isCheckTest6() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 0, 4),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("QUEEN", K_BLACK, 4, 7)
+    };
+    //OutputPiecesAsBoard.print(pieces);
+
+    // expected
+    Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[2]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
+
+    // compare
+    assertEquals(expected, piecesThreateningKing);
+  }
+
+  @Test
+  void isCheckTest7() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 0, 4),
+            new PieceConfig("PAWN", K_WHITE, 6, 4),
+            new PieceConfig("PAWN", K_WHITE, 6, 5),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("BISHOP", K_WHITE, 7, 5),
+            new PieceConfig("BISHOP", K_BLACK, 4, 1),
+            new PieceConfig("ROOK", K_BLACK, 7, 2, 5, 2)
+    };
+    //OutputPiecesAsBoard.print(pieces);
+
+    // expected
+    Set<PieceConfig> expected = new HashSet<>(Arrays.asList(pieces[5], pieces[6]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(pieces, K_WHITE);
 
     // compare
     assertEquals(expected, piecesThreateningKing);
