@@ -4,20 +4,36 @@ public class ChessMove {
   private final Coordinates oldPos;
   private final Coordinates newPos;
   private final boolean isAttack;
+  private final boolean isEnPassantAttack;
 
   public ChessMove(int rowNew, int colNew, int rowOld, int colOld, boolean isAttack) {
     newPos = new Coordinates(rowNew, colNew);
     oldPos = new Coordinates(rowOld, colOld);
     this.isAttack = isAttack;
+    this.isEnPassantAttack = false;
   }
   public ChessMove(Coordinates coorsNew, Coordinates coorsOld, boolean isAttack) {
     newPos = new Coordinates(coorsNew);
     oldPos = new Coordinates(coorsOld);
     this.isAttack = isAttack;
+    this.isEnPassantAttack = false;
+  }
+  public ChessMove(int rowNew, int colNew, int rowOld, int colOld, boolean isAttack, boolean isEnPassantAttack) {
+    newPos = new Coordinates(rowNew, colNew);
+    oldPos = new Coordinates(rowOld, colOld);
+    this.isAttack = isAttack;
+    this.isEnPassantAttack = isEnPassantAttack;
+  }
+  public ChessMove(Coordinates coorsNew, Coordinates coorsOld, boolean isAttack, boolean isEnPassantAttack) {
+    newPos = new Coordinates(coorsNew);
+    oldPos = new Coordinates(coorsOld);
+    this.isAttack = isAttack;
+    this.isEnPassantAttack = isEnPassantAttack;
   }
 
 
   public boolean isAttack() { return isAttack; }
+  public boolean isEnPassantAttack() { return isEnPassantAttack; }
   public Coordinates getNewPos() {
     return newPos;
   }

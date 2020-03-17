@@ -21,10 +21,18 @@ import java.util.List;
  */
 public class ChessBoard {
 
+  public static final int K_DIM = 8;
+
   public static final int K_WHITE = 0;
   public static final int K_BLACK = 1;
 
-  public static final int K_DIM = 8;
+  public static final int K_DIRECTION_WHITE = -1;
+  public static final int K_DIRECTION_BLACK = 1;
+
+  public static final int K_ROW_WHITE_PAWNS_START= 6;
+  public static final int K_ROW_BLACK_PAWNS_START = 1;
+  public static final int K_ROW_BLACK_PAWNS_WAIT_FOR_ENPASSANT = 4;
+  public static final int K_ROW_WHITE_PAWNS_WAIT_FOR_ENPASSANT = 3;
 
   // TODO: the 2d board array could be of a smaller datatype than PieceConfig
   //       --> PieceConfig stores row and column, which is redundant because it is given
@@ -52,6 +60,9 @@ public class ChessBoard {
     this(oldBoard);
     board[pieceToMove.getRow()][pieceToMove.getCol()] = null;
     board[move.getNewPos().row][move.getNewPos().col] = new PieceConfig(pieceToMove, move);
+    if (move.isEnPassantAttack()) { // in that case captured piece is on other field - need to remove it from board
+      board[move.getOldPos().row][move.getNewPos().col] = null;
+    }
   }
 
   private void fillBoardFromArrayOfPieces(PieceConfig[] pieces) {

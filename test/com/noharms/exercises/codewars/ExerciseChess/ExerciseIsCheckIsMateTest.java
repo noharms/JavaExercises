@@ -182,6 +182,34 @@ class ExerciseIsCheckIsMateTest {
     assertEquals(expectedPieces, piecesThreateningKing);
   }
 
+  @Test
+  void isCheckTest9() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 3, 5),
+            new PieceConfig("PAWN", K_BLACK, 3, 4),
+            new PieceConfig("PAWN", K_BLACK, 5, 5),
+            new PieceConfig("BISHOP", K_BLACK, 2, 4),
+            new PieceConfig("ROOK", K_BLACK, 2, 5),
+            new PieceConfig("KNIGHT", K_BLACK, 3, 3),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("QUEEN", K_WHITE, 5, 6),
+            new PieceConfig("ROOK", K_WHITE, 6, 5),
+            new PieceConfig("KNIGHT", K_WHITE, 5, 2),
+            new PieceConfig("PAWN", K_WHITE, 4, 4, 6, 4)
+    };
+
+    // expectedPieces
+    Set<PieceConfig> expectedPieces = new HashSet<>(Arrays.asList(pieces[10]));
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(new ChessBoard(pieces), pieces, K_BLACK);
+
+    // compare
+    assertEquals(expectedPieces, piecesThreateningKing);
+  }
+
 
   @Test
   void isMateTest1() {
@@ -256,6 +284,70 @@ class ExerciseIsCheckIsMateTest {
     // expectedPieces
     Set<PieceConfig> expectedPieces = new HashSet<>(Arrays.asList(pieces[7]));
     boolean expectedIsMate = true;
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(new ChessBoard(pieces), pieces, K_BLACK);
+    boolean isMate = ex.isMate(new ChessBoard(pieces), pieces, K_BLACK);
+
+    // compare
+    assertEquals(expectedPieces, piecesThreateningKing);
+    assertEquals(expectedIsMate, isMate);
+  }
+
+
+  @Test
+  void isMateTest4() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 3, 5),
+            new PieceConfig("PAWN", K_BLACK, 3, 4),
+            new PieceConfig("PAWN", K_BLACK, 4, 3),
+            new PieceConfig("BISHOP", K_BLACK, 2, 4),
+            new PieceConfig("ROOK", K_BLACK, 2, 5),
+            new PieceConfig("KNIGHT", K_BLACK, 3, 3),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("QUEEN", K_WHITE, 5, 6),
+            new PieceConfig("KNIGHT", K_WHITE, 5, 2),
+            new PieceConfig("PAWN", K_WHITE, 6, 5),
+            new PieceConfig("PAWN", K_WHITE, 4, 4, 6, 2)
+    };
+
+    // expectedPieces
+    Set<PieceConfig> expectedPieces = new HashSet<>(Arrays.asList(pieces[10]));
+    boolean expectedIsMate = false; // not mate due to en passant attack d4xe3
+
+    // actual
+    ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);
+    Set<PieceConfig> piecesThreateningKing = ex.isCheck(new ChessBoard(pieces), pieces, K_BLACK);
+    boolean isMate = ex.isMate(new ChessBoard(pieces), pieces, K_BLACK);
+
+    // compare
+    assertEquals(expectedPieces, piecesThreateningKing);
+    assertEquals(expectedIsMate, isMate);
+  }
+
+
+  @Test
+  void isMateTest5() {
+    // input
+    PieceConfig[] pieces = new PieceConfig[] {
+            new PieceConfig("KING", K_BLACK, 3, 5),
+            new PieceConfig("PAWN", K_BLACK, 3, 4),
+            new PieceConfig("PAWN", K_BLACK, 4, 5),
+            new PieceConfig("BISHOP", K_BLACK, 2, 4),
+            new PieceConfig("ROOK", K_BLACK, 2, 5),
+            new PieceConfig("KNIGHT", K_BLACK, 3, 3),
+            new PieceConfig("KING", K_WHITE, 7, 4),
+            new PieceConfig("QUEEN", K_WHITE, 5, 6),
+            new PieceConfig("ROOK", K_WHITE, 6, 5),
+            new PieceConfig("KNIGHT", K_WHITE, 5, 2),
+            new PieceConfig("PAWN", K_WHITE, 4, 4, 6, 4)
+    };
+
+    // expectedPieces
+    Set<PieceConfig> expectedPieces = new HashSet<>(Arrays.asList(pieces[10]));
+    boolean expectedIsMate = true; // potential en passant move is invalid (would put black king in check)
 
     // actual
     ExerciseIsCheckIsMate ex = new ExerciseIsCheckIsMate(pieces);

@@ -4,8 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.noharms.exercises.codewars.ExerciseChess.ChessBasicMoves.*;
-import static com.noharms.exercises.codewars.ExerciseChess.ChessBoard.K_BLACK;
-import static com.noharms.exercises.codewars.ExerciseChess.ChessBoard.K_WHITE;
+import static com.noharms.exercises.codewars.ExerciseChess.ChessBoard.*;
 
 
 public class ExerciseIsCheckIsMate {
@@ -144,12 +143,14 @@ public class ExerciseIsCheckIsMate {
    * @return
    */
   private Set<ChessMove> computePotentialMovesForPawn(ChessBoard board, PieceConfig pieceToMove) {
+    int colorToMove = pieceToMove.getColor();
     Coordinates oldCoors = new Coordinates(pieceToMove.getRow(), pieceToMove.getCol());
     Coordinates newCoors;
     Set<ChessMove> potentialMoves = new HashSet<>();
-    int rowDir = (pieceToMove.getColor() == 0 ? -1 : 1); // white moves upwards (row index decreases)
+    int pawnsMoveDirection =
+            (pieceToMove.getColor() == K_WHITE ? K_DIRECTION_WHITE : K_DIRECTION_BLACK); // white moves upwards (row index decreases)
     // 1. move one up/down
-    Coordinates move1 = new Coordinates(rowDir, 0);
+    Coordinates move1 = new Coordinates(pawnsMoveDirection, 0);
     newCoors = Coordinates.add(oldCoors, move1);
     if (newCoors.isInsideBoard()) {
       PieceConfig pieceOnNewPos = board.getPieceAtCoordinates(newCoors.row, newCoors.col);
@@ -158,7 +159,7 @@ public class ExerciseIsCheckIsMate {
       }
     }
     // 2. attack diagonal to smaller column side
-    Coordinates attack1 = new Coordinates(rowDir, -1);
+    Coordinates attack1 = new Coordinates(pawnsMoveDirection, -1);
     newCoors = Coordinates.add(oldCoors, attack1);
     if (newCoors.isInsideBoard()) {
       PieceConfig pieceOnNewPos = board.getPieceAtCoordinates(newCoors.row, newCoors.col);
@@ -167,7 +168,7 @@ public class ExerciseIsCheckIsMate {
       }
     }
     // 3. attack diagonal to greater column side
-    Coordinates attack2 = new Coordinates(rowDir, 1);
+    Coordinates attack2 = new Coordinates(pawnsMoveDirection, 1);
     newCoors = Coordinates.add(oldCoors, attack2);
     if (newCoors.isInsideBoard()) {
       PieceConfig pieceOnNewPos = board.getPieceAtCoordinates(newCoors.row, newCoors.col);
@@ -176,21 +177,52 @@ public class ExerciseIsCheckIsMate {
       }
     }
     // 4. move 2 up
-    Coordinates move2 = new Coordinates(rowDir * 2, 0);
-    newCoors = Coordinates.add(oldCoors, move2);
-    if (newCoors.isInsideBoard()) {
-      // check one step is OK
-      PieceConfig pieceOnMiddleField = board.getPieceAtCoordinates(newCoors.row - rowDir, newCoors.col);
-      if(pieceOnMiddleField == null) {
-        // check two step is OK
-        PieceConfig pieceOnNewPos = board.getPieceAtCoordinates(newCoors.row, newCoors.col);
-        if (pieceOnNewPos == null) {
-          potentialMoves.add(new ChessMove(newCoors, oldCoors, false));
+    int rowPawnsStart = colorToMove == K_BLACK ? K_ROW_BLACK_PAWNS_START : K_ROW_WHITE_PAWNS_START;
+    if (pieceToMove.getRow() == rowPawnsStart) {
+      Coordinates move2 = new Coordinates(pawnsMoveDirection * 2, 0);
+      newCoors = Coordinates.add(oldCoors, move2);
+      if (newCoors.isInsideBoard()) {
+        // check one step is OK
+        PieceConfig pieceOnMiddleField = board.getPieceAtCoordinates(newCoors.row - pawnsMoveDirection, newCoors.col);
+        if(pieceOnMiddleField == null) {
+          // check two step is OK
+          PieceConfig pieceOnNewPos = board.getPieceAtCoordinates(newCoors.row, newCoors.col);
+          if (pieceOnNewPos == null) {
+            potentialMoves.add(new ChessMove(newCoors, oldCoors, false));
+          }
         }
       }
     }
-    // 5. on passant attack to smaller column side - TODO
-    // 6. on passant attack to smaller column side - TODO
+    // 5. and 6. en passant attacks to left or right
+    int rowToWaitForEnpassant =
+            colorToMove == K_BLACK ? K_ROW_BLACK_PAWNS_WAIT_FOR_ENPASSANT : K_ROW_WHITE_PAWNS_WAIT_FOR_ENPASSANT;
+    int rowOpposingPawnsStart =
+            colorToMove == K_BLACK ? K_ROW_WHITE_PAWNS_START : K_ROW_BLACK_PAWNS_START;
+    if (pieceToMove.getRow() == rowToWaitForEnpassant) {
+      if (pieceToMove.getCol() > 0) {
+        PieceConfig leftNeighbor = board.getBoardMatrix()[pieceToMove.getRow()][pieceToMove.getCol() - 1];
+        // check if leftNeighbor made en passant movement
+        if (leftNeighbor != null &&
+                leftNeighbor.isPawn() && leftNeighbor.getColor() != colorToMove &&
+                leftNeighbor.getPrevRow() == rowOpposingPawnsStart) {
+          Coordinates attack3 = new Coordinates(pawnsMoveDirection, -1);
+          newCoors = Coordinates.add(oldCoors, attack3);
+          // if two-up move of the left neighbor was correct, no need to check if other piece is sitting at newcoors
+          potentialMoves.add(new ChessMove(newCoors, oldCoors, true, true));
+        }
+      }
+      if (pieceToMove.getCol() < 7) {
+        PieceConfig rightNeighbor = board.getBoardMatrix()[pieceToMove.getRow()][pieceToMove.getCol() + 1];
+        // check if right neighbor made en passent movement
+        if (rightNeighbor != null &&
+                rightNeighbor.isPawn() && rightNeighbor.getColor() != colorToMove &&
+                rightNeighbor.getPrevRow() == rowOpposingPawnsStart) {
+          Coordinates attack4 = new Coordinates(pawnsMoveDirection, 1);
+          newCoors = Coordinates.add(oldCoors, attack4);
+          potentialMoves.add(new ChessMove(newCoors, oldCoors, true, true));
+        }
+      }
+    }
     return potentialMoves;
   }
   private Set<ChessMove> computePotentialMovesForKnightOrKing(
