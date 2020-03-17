@@ -39,17 +39,17 @@ public class ExerciseIsCheckIsMate {
    *
    * @return
    */
-  public Set<PieceConfig> isCheck(final PieceConfig[] allPieces, int colorToMove) {
+  public Set<PieceConfig> isCheck(ChessBoard board, final PieceConfig[] allPieces, int colorToMove) {
 
     int colorLastMoved = (colorToMove == K_BLACK ? K_WHITE : K_BLACK);
     Set<PieceConfig> piecesOfColorToMove = getPiecesSameColor(allPieces, colorToMove);
     Set<PieceConfig> piecesOfColorLastMoved = getPiecesSameColor(allPieces, colorLastMoved);
-    PieceConfig kingColorToMove = getKing(piecesOfColorToMove, colorToMove);
-    PieceConfig kingColorLastMoved = getKing(piecesOfColorLastMoved, colorLastMoved);
+//    PieceConfig kingColorToMove = getKing(piecesOfColorToMove, colorToMove);
+//    PieceConfig kingColorLastMoved = getKing(piecesOfColorLastMoved, colorLastMoved);
 
     // 0. compute potential new positions (not considering whether move would put own king into check)
     Map<PieceConfig, Set<ChessMove>> piecesOfLastMovedColor2PotentialMoves =
-            computePotentialMovesForPieces(piecesOfColorLastMoved, boardToAnalyse);
+            computePotentialMovesForPieces(board, piecesOfColorLastMoved);
 
     // 1.  compare king position with potential moves
     Set<PieceConfig> threateningPieces = new HashSet<>();
@@ -62,7 +62,7 @@ public class ExerciseIsCheckIsMate {
       for (ChessMove potentialMove : potentialMoves) {
         int row = potentialMove.getNewPos().row;
         int col = potentialMove.getNewPos().col;
-        PieceConfig pieceAtTargetField = boardToAnalyse.getPieceAtCoordinates(row, col);
+        PieceConfig pieceAtTargetField = board.getPieceAtCoordinates(row, col);
         if (pieceAtTargetField != null
                 && pieceAtTargetField.isKing()) {
           threateningPieces.add(pieceOfColorLastMoved);
@@ -97,30 +97,30 @@ public class ExerciseIsCheckIsMate {
    * @return
    */
   private Map<PieceConfig, Set<ChessMove>> computePotentialMovesForPieces(
-          Set<PieceConfig> piecesToMove,
-          ChessBoard board
+          ChessBoard board,
+          Set<PieceConfig> piecesToMove
   ) {
     Map<PieceConfig, Set<ChessMove>> piece2moves = new HashMap<>();
     for (PieceConfig piece : piecesToMove) {
-      Set<ChessMove> chessMoves = computePotentialMovesForPiece(piece, board);
+      Set<ChessMove> chessMoves = computePotentialMovesForPiece(board, piece);
       piece2moves.put(piece, chessMoves);
     }
     return piece2moves;
   }
 
-  private Set<ChessMove> computePotentialMovesForPiece(PieceConfig pieceToMove, ChessBoard board) {
+  private Set<ChessMove> computePotentialMovesForPiece(ChessBoard board, PieceConfig pieceToMove) {
     if (pieceToMove.isPawn()) {
-      return computePotentialMovesForPawn(pieceToMove, board);
+      return computePotentialMovesForPawn(board, pieceToMove);
     } else if (pieceToMove.isRook()) {
-      return computePotentialMovesForRunners(pieceToMove, board, K_BASIC_MOVES_ROOK);
+      return computePotentialMovesForRunners(board, pieceToMove, K_BASIC_MOVES_ROOK);
     } else if (pieceToMove.isKnight()) {
-      return computePotentialMovesForKnightOrKing(pieceToMove, board, K_BASIC_MOVES_KNIGHT);
+      return computePotentialMovesForKnightOrKing(board, pieceToMove, K_BASIC_MOVES_KNIGHT);
     } else if (pieceToMove.isBishop()) {
-      return computePotentialMovesForRunners(pieceToMove, board, K_BASIC_MOVES_BISHOP);
+      return computePotentialMovesForRunners(board, pieceToMove, K_BASIC_MOVES_BISHOP);
     } else if (pieceToMove.isQueen()) {
-      return computePotentialMovesForRunners(pieceToMove, board, K_BASIC_MOVES_QUEEN);
+      return computePotentialMovesForRunners(board, pieceToMove, K_BASIC_MOVES_QUEEN);
     } else if (pieceToMove.isKing()) {
-      return computePotentialMovesForKnightOrKing(pieceToMove, board, K_BASIC_MOVES_KING);
+      return computePotentialMovesForKnightOrKing(board, pieceToMove, K_BASIC_MOVES_KING);
     } else {
       throw new Error("Unknown piece type. " + pieceToMove.toString());
     }
@@ -143,7 +143,7 @@ public class ExerciseIsCheckIsMate {
    * @param pieceToMove
    * @return
    */
-  private Set<ChessMove> computePotentialMovesForPawn(PieceConfig pieceToMove, ChessBoard board) {
+  private Set<ChessMove> computePotentialMovesForPawn(ChessBoard board, PieceConfig pieceToMove) {
     Coordinates oldCoors = new Coordinates(pieceToMove.getRow(), pieceToMove.getCol());
     Coordinates newCoors;
     Set<ChessMove> potentialMoves = new HashSet<>();
@@ -194,8 +194,8 @@ public class ExerciseIsCheckIsMate {
     return potentialMoves;
   }
   private Set<ChessMove> computePotentialMovesForKnightOrKing(
-          PieceConfig pieceToMove,
           ChessBoard board,
+          PieceConfig pieceToMove,
           Set<Coordinates> basicMoves) {
     Coordinates oldCoors = new Coordinates(pieceToMove.getRow(), pieceToMove.getCol());
     Set<ChessMove> potentialMoves = new HashSet<>();
@@ -229,8 +229,8 @@ public class ExerciseIsCheckIsMate {
    * @return
    */
   private Set<ChessMove> computePotentialMovesForRunners(
-          PieceConfig pieceToMove,
           ChessBoard board,
+          PieceConfig pieceToMove,
           Set<Coordinates> basicMoves) {
     Coordinates oldCoors = new Coordinates(pieceToMove.getRow(), pieceToMove.getCol());
     Set<ChessMove> potentialMoves = new HashSet<>();
@@ -260,7 +260,7 @@ public class ExerciseIsCheckIsMate {
     return potentialMoves;
   }
 
-  public boolean isMate(final PieceConfig[] allPieces, int colorToMove) {
+  public boolean isMate(ChessBoard board, final PieceConfig[] allPieces, int colorToMove) {
 
     int colorLastMoved = (colorToMove == K_BLACK ? K_WHITE : K_BLACK);
     Set<PieceConfig> piecesOfColorToMove = getPiecesSameColor(allPieces, colorToMove);
@@ -268,7 +268,7 @@ public class ExerciseIsCheckIsMate {
     PieceConfig kingColorToMove = getKing(piecesOfColorToMove, colorToMove);
     PieceConfig kingColorLastMoved = getKing(piecesOfColorLastMoved, colorLastMoved);
 
-    Set<PieceConfig> piecesThreateningKingOfColorToMove = isCheck(allPieces, colorToMove);
+    Set<PieceConfig> piecesThreateningKingOfColorToMove = isCheck(board, allPieces, colorToMove);
     boolean isColorToMoveInCheck = !piecesThreateningKingOfColorToMove.isEmpty();
     if (!isColorToMoveInCheck) {
       return false;
@@ -276,29 +276,10 @@ public class ExerciseIsCheckIsMate {
     // reaching here, means colorToMove is in check
     // compute all allowed moves of colorToMove and check if there is one move
     // that would put colorToMove out of check
-    // 0. compute potential new positions (not considering whether move would put own king into check)
-    Map<PieceConfig, Set<ChessMove>> piecesOfColorToMove2PotentialMoves =
-            computePotentialMovesForPieces(piecesOfColorToMove, boardToAnalyse);
-    // 1. filter potential moves to valid moves
-    //    (a move is valid, if afterwards the own king is not in check)
-    Map<PieceConfig, Set<ChessMove>> piecesOfColorToMove2ValidMoves = new HashMap<>();
-    for (Map.Entry<PieceConfig, Set<ChessMove>> entry : piecesOfColorToMove2PotentialMoves.entrySet()) {
-      PieceConfig pieceOfColorToMove = entry.getKey();
-      Set<ChessMove> potentialMoves = entry.getValue();
-      Set<ChessMove> validMoves = new HashSet<>();
-      for (ChessMove hypotheticalMove : potentialMoves) {
-        ChessBoard hypotheticalBoard = new ChessBoard(boardToAnalyse, pieceOfColorToMove, hypotheticalMove);
-        PieceConfig[] allPiecesAfterHypotheticalMove = hypotheticalBoard.buildPiecesArray();
-        Set<PieceConfig> piecesThreateningKing = isCheck(allPiecesAfterHypotheticalMove, colorToMove);
-        if (piecesThreateningKing.isEmpty()) {
-          validMoves.add(hypotheticalMove);
-        } else {
-          // king is threatened ! hypothetical move is invalid and thus not copied to validMoves set
-        }
-      }
-      piecesOfColorToMove2ValidMoves.put(pieceOfColorToMove, validMoves);
-    }
-    throw new Error("TODO");
+    Map<PieceConfig, Set<ChessMove>> validMoves =
+            computeValidMovesForPieces(board, piecesOfColorToMove, colorToMove);
+
+    return validMoves.isEmpty();
   }
 
   /*  compute valid (=notPuttingOwnKingInCheck) moves
@@ -311,10 +292,36 @@ public class ExerciseIsCheckIsMate {
 
   */
   private Map<PieceConfig, Set<ChessMove>> computeValidMovesForPieces(
+          ChessBoard board,
           Set<PieceConfig> piecesToMove,
-          ChessBoard board){
-    return null;
+          int colorToMove){
+    // 0. compute potential new positions (not considering whether move would put own king into check)
+    Map<PieceConfig, Set<ChessMove>> piecesOfColorToMove2PotentialMoves =
+            computePotentialMovesForPieces(board, piecesToMove);
+    // 1. filter potential moves to valid moves
+    //    (a move is valid, if afterwards the own king is not in check)
+    Map<PieceConfig, Set<ChessMove>> piecesOfColorToMove2ValidMoves = new HashMap<>();
+    for (Map.Entry<PieceConfig, Set<ChessMove>> entry : piecesOfColorToMove2PotentialMoves.entrySet()) {
+      PieceConfig pieceOfColorToMove = entry.getKey();
+      Set<ChessMove> potentialMoves = entry.getValue();
+      Set<ChessMove> validMoves = new HashSet<>();
+      for (ChessMove hypotheticalMove : potentialMoves) {
+        ChessBoard hypotheticalBoard = new ChessBoard(board, pieceOfColorToMove, hypotheticalMove);
+        PieceConfig[] allPiecesAfterHypotheticalMove = hypotheticalBoard.buildPiecesArray();
+        Set<PieceConfig> piecesThreateningKing = isCheck(hypotheticalBoard, allPiecesAfterHypotheticalMove, colorToMove);
+        if (piecesThreateningKing.isEmpty()) {
+          validMoves.add(hypotheticalMove);
+        } else {
+          // king is threatened ! hypothetical move is invalid and thus not copied to validMoves set
+        }
+      }
+      if (!validMoves.isEmpty()) {
+        piecesOfColorToMove2ValidMoves.put(pieceOfColorToMove, validMoves);
+      }
+    }
+    return piecesOfColorToMove2ValidMoves;
   }
+
 }
 
 
